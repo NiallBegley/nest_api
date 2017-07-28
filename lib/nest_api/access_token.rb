@@ -29,7 +29,9 @@ module NestApi
           grant_type: 'authorization_code'
         })
 
-      File.open(@file, "w") { |file| file.write(result.to_json) }
+      puts "Here is the code:\n" + result["access_token"]
+
+      #File.open(@file, "w") { |file| file.write(result.to_json) }
 
       @auth_code = result
     end
@@ -40,11 +42,15 @@ module NestApi
 
     # Read saved nest credentials from a file
     def retrieve_credentials
-      @auth_code = JSON.parse(File.read(@file))
-
-      if @auth_code['access_token'].nil? || @auth_code['access_token'].empty?
-        configuration_error
+      #@auth_code = JSON.parse(File.read(@file))
+      if ENV['NEST_API_AUTH_TOKEN'].nil?
+        authorize
+      else
+        @auth_code = {"access_token" => ENV['NEST_API_AUTH_TOKEN']}
       end
+     # if @auth_code['access_token'].nil? || @auth_code['access_token'].empty?
+      #  configuration_error
+     # end
 
       @auth_code
 

@@ -29,10 +29,8 @@ module NestApi
           grant_type: 'authorization_code'
         })
 
-      if env.development?
+      if Rails.env.development?
         File.open(@file, "w") { |file| file.write(result.to_json) }
-      else
-        puts "Place this code in your NEST_API_AUTH_TOKEN env variable and restart server:\n" + result["access_token"]
       end
 
       @auth_code = result
@@ -44,7 +42,7 @@ module NestApi
 
     # Read saved nest credentials from a file
     def retrieve_credentials
-      if env.development?
+      if Rails.env.development?
         @auth_code = JSON.parse(File.read(@file))
 
         if @auth_code['access_token'].nil? || @auth_code['access_token'].empty?
